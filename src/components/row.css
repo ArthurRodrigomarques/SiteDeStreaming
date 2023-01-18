@@ -34,3 +34,10 @@
 .movie-card:hover {
     transform: scale(1.20);
 }
+
+
+.react-player {
+    width: 100%;
+    height: auto;
+    margin:0 auto ;
+}

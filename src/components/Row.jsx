@@ -2,12 +2,27 @@ import React from 'react'
 import { useState } from 'react'
 import { getMovies } from '../api'
 import { useEffect } from 'react'
-
+import ReactPlayer from "react-player"
+import MovieTrailer from "movie-trailer"
 import './row.css'
 
 const imageHost = "https://image.tmdb.org/t/p/original/";
 const Row = ({title, path, isLarge }) => {
     const [movies, setMovies] = useState([])
+    const [trailerUrl, setTrailerUrl] = React.useState("")
+
+    const handleOnClick = (movie) => {
+        if(trailerUrl) {
+            setTrailerUrl("")
+        } else {
+            MovieTrailer(movie.title || movie.name || movie.original_name || "").then((url) => {
+                setTrailerUrl(url)
+            })
+            .catch((error) => {
+                console.log("error fetching movie trailer:", error)
+            })
+        }
+    }
 
     const fetchMovies = async (_path) => {
         try {
@@ -30,12 +45,14 @@ const Row = ({title, path, isLarge }) => {
             {movies?.map(movie => {
                 return (
                     <img className={`movie-card ${isLarge && "movie-card-large"}`}
+                    onClick={() => handleOnClick(movie)}
                         key={movie.id}
                         src={`${imageHost}${isLarge ? movie.backdrop_path : movie.poster_path}`} 
                         alt={movie.name}/>
                 )
             })}
         </div>
+            {trailerUrl &&<ReactPlayer className="react-player" url={trailerUrl} playing={true}/>}
     </div>
   )
 }
